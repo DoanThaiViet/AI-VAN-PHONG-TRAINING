@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI cho Văn phòng PVEP - tờ gập cầm tay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Be+Vietnam+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--g:#006838;--g2:#00A651;--navy:#0A2A4A;--ink:#16203A;--ink2:#4B5563;--mute:#94A3B8;--line:#D9E2EC;--bg:#F3F6F9}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#cfd8e3;font-family:"Be Vietnam Pro",Arial,Helvetica,sans-serif;color:var(--ink);font-size:8.2pt;line-height:1.32;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.toolbar{position:sticky;top:0;z-index:9;background:var(--navy);color:#fff;padding:8px 14px;display:flex;gap:12px;align-items:center;font-size:10.5pt}
+.toolbar b{font-family:Sora,sans-serif}
+.toolbar button{margin-left:auto;background:var(--g2);color:#fff;border:0;border-radius:999px;padding:7px 16px;font-weight:700;cursor:pointer;font-family:inherit}
+.toolbar small{opacity:.8}
+.sheet{width:297mm;height:210mm;background:#fff;margin:10mm auto;display:grid;grid-template-columns:1fr 1fr;position:relative;box-shadow:0 8px 30px rgba(0,0,0,.18);overflow:hidden;page-break-after:always}
+.sheet:after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed #b7c3d0}
+.panel{padding:8mm 8mm 7mm;display:flex;flex-direction:column;gap:2.4mm;min-width:0;overflow:hidden;position:relative}
+.panel__foot{margin-top:auto;font-size:6.6pt;color:var(--mute);display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:1.6mm}
+h1{font-family:Sora,sans-serif;font-size:15pt;color:var(--g);line-height:1.15}
+h2{font-family:Sora,sans-serif;font-size:8.6pt;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;border-left:3px solid var(--g2);padding-left:2mm;margin-top:1mm}
+.brand{display:flex;align-items:center;gap:3mm;border-bottom:2px solid var(--g);padding-bottom:2mm}
+.brand img{height:11mm;width:auto}
+.brand small{display:block;color:var(--ink2);font-size:7pt}
+.lead{font-size:7.8pt;color:var(--ink2)}
+.lead b{color:var(--g)}
+/* mat 1 */
+.sixwrap{display:grid;grid-template-columns:1fr 1fr;gap:1.6mm}
+.six{display:flex;gap:1.6mm;border:1px solid var(--line);border-radius:2mm;padding:1.6mm 2mm;background:#fff}
+.six__n{flex:none;width:5mm;height:5mm;border-radius:50%;background:var(--g);color:#fff;font-family:Sora,sans-serif;font-weight:800;font-size:7.5pt;display:flex;align-items:center;justify-content:center}
+.six b{display:block;font-size:8pt;color:var(--navy)}
+.six small{display:block;font-size:6.9pt;color:var(--ink2);line-height:1.25}
+.six em{display:block;font-size:6.8pt;color:var(--g);margin-top:.6mm;font-style:italic}
+.formula{background:var(--bg);border-radius:2mm;padding:1.8mm 2.4mm;font-size:7.4pt;font-weight:700;color:var(--navy);text-align:center}
+.ck{display:flex;gap:2mm;align-items:flex-start;padding:1.2mm 0;border-bottom:1px dotted var(--line)}
+.ck:last-child{border-bottom:0}
+.ck__box{flex:none;width:4.2mm;height:4.2mm;border:1.5px solid var(--g);border-radius:1mm;margin-top:.4mm}
+.ck b{display:block;font-size:7.9pt;color:var(--ink)}
+.ck small{display:block;font-size:6.9pt;color:var(--ink2)}
+.rule{background:var(--navy);color:#fff;border-radius:2mm;padding:2mm 2.6mm;font-size:7.6pt;line-height:1.35}
+.rule b{color:#86efac}
+/* mat 2-3: prompt */
+.pr{border:1px solid var(--line);border-radius:2mm;overflow:hidden;background:#fff}
+.pr__h{display:flex;align-items:center;gap:2mm;background:var(--g);color:#fff;padding:1.2mm 2.2mm}
+.pr__n{font-family:Sora,sans-serif;font-weight:800;font-size:9pt;background:rgba(255,255,255,.18);border-radius:1.2mm;padding:0 1.4mm}
+.pr__t{font-family:Sora,sans-serif;font-weight:700;font-size:8.2pt}
+.pr__tag{margin-left:auto;font-size:6.4pt;opacity:.9}
+.pr__run{background:#E6F7EE;color:#064E3B;font-size:6.9pt;padding:1.1mm 2.2mm;border-bottom:1px solid #C6EBD6;line-height:1.3}
+.pr__body{padding:1.4mm 2.2mm 1.6mm;font-size:7pt;line-height:1.3}
+.pr__body .f b{color:var(--navy)}
+.pr__body ul{list-style:none;margin-top:.4mm}
+.pr__body li{position:relative;padding-left:2.6mm;color:var(--ink2)}
+.pr__body li:before{content:"›";position:absolute;left:.4mm;color:var(--g2);font-weight:800}
+/* mat 4 */
+.rt{display:grid;grid-template-columns:1.35fr auto 1.1fr;gap:1.6mm;align-items:center;border:1px solid var(--line);border-radius:2mm;padding:1.3mm 2mm;font-size:7pt}
+.rt__w{color:var(--ink);font-weight:600}
+.rt__t{font-family:Sora,sans-serif;font-weight:800;color:#fff;background:var(--navy);border-radius:999px;padding:.6mm 2.2mm;font-size:7pt;white-space:nowrap}
+.rt__n{color:var(--ink2);font-size:6.6pt}
+table.mx{width:100%;border-collapse:collapse;font-size:6.6pt}
+table.mx th{font-weight:600;color:var(--ink2);text-align:center;padding:.6mm .4mm;border-bottom:1px solid var(--line);line-height:1.15}
+table.mx td{text-align:center;padding:.5mm .4mm;font-size:10pt;color:var(--g);line-height:1;border-bottom:1px dotted var(--line)}
+table.mx td.mx__t{text-align:left;font-size:7.2pt;font-weight:700;color:var(--navy);font-family:Sora,sans-serif}
+.mxl{font-size:6.3pt;color:var(--ink2);text-align:right}
+.zones{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6mm}
+.zn{border:1px solid var(--c);border-radius:2mm;overflow:hidden;display:flex;flex-direction:column}
+.zn__h{background:var(--c);color:#fff;font-weight:700;font-size:7pt;padding:1mm 1.6mm;display:flex;gap:1.2mm;align-items:center}
+.zn__h span{background:rgba(255,255,255,.22);border-radius:1mm;padding:0 1.2mm;font-family:Sora,sans-serif;font-size:6.4pt}
+.zn__b{padding:1.2mm 1.4mm;display:flex;flex-wrap:wrap;gap:.9mm}
+.zn__b i{font-style:normal;font-size:6.2pt;border:1px solid var(--line);border-radius:999px;padding:.3mm 1.4mm;color:var(--ink);background:#fff;line-height:1.25}
+.zn__r{margin-top:auto;font-size:6.2pt;color:var(--c);padding:0 1.4mm 1.2mm;font-weight:600;line-height:1.25}
+.leaks{display:flex;flex-wrap:wrap;gap:1.2mm;font-size:6.6pt;font-weight:700;color:#B91C1C}
+.leaks span{border:1px solid #FCA5A5;background:#FEF2F2;border-radius:999px;padding:.5mm 1.8mm}
+.print-note{max-width:297mm;margin:0 auto 12mm;font-size:9.5pt;color:#334155;background:#fff;border-radius:8px;padding:10px 14px}
+@page{size:A4 landscape;margin:0}
+@media print{
+  html,body{background:#fff}
+  .toolbar,.print-note{display:none}
+  .sheet{margin:0;box-shadow:none;width:297mm;height:210mm}
+}
+</style>
+</head>
+<body>
+<div class="toolbar"><b>Tờ gập cầm tay · AI cho Văn phòng PVEP</b><small>In A4 ngang, 2 mặt (lật cạnh dài), gập đôi. Trang 1 là mặt ngoài, trang 2 là mặt trong.</small><button onclick="window.print()">In / Lưu PDF</button></div>
+
+<!-- ===== TRANG 1 (mặt ngoài): trái = mặt 4 (bìa sau), phải = mặt 1 (bìa trước) ===== -->
+<div class="sheet">
+  <div class="panel">
+    <h2>Việc nào mở công cụ nào</h2>
+    <div class="rt"><div class="rt__w">Tài liệu nội bộ: công văn, dự thảo, hồ sơ họp, hộp thư</div><div class="rt__t">Copilot</div><div class="rt__n">Tài khoản cơ quan, ngay trong Word · Outlook · Teams</div></div><div class="rt"><div class="rt__w">Hồ sơ dày, nhiều file, cần dẫn nguồn (đã công khai hoặc đã làm sạch)</div><div class="rt__t">NotebookLM</div><div class="rt__n">Nạp tài liệu trước, chỉ trả lời trong hồ sơ</div></div><div class="rt"><div class="rt__w">Soạn nhanh, nghĩ ý tưởng, ảnh minh hoạ, infographic</div><div class="rt__t">ChatGPT</div><div class="rt__n">Đính kèm mẫu thương hiệu PVEP khi làm ảnh, slide</div></div><div class="rt"><div class="rt__w">Tài liệu rất dài, soát văn bản, dựng bảng điều hành, ứng dụng nhỏ</div><div class="rt__t">Claude</div><div class="rt__n">Mô tả bằng lời, không cần biết lập trình</div></div>
+    <h2>Con nào mạnh việc gì</h2>
+    <table class="mx"><thead><tr><th style="text-align:left">Công cụ</th><th>Đọc tài liệu dài</th><th>Bám nguồn, ít bịa</th><th>Soạn văn bản hành chính</th><th>Dựng công cụ, tự động hoá</th><th>Nằm sẵn trong Office</th></tr></thead><tbody><tr><td class='mx__t'>ChatGPT</td><td>◕</td><td>◑</td><td>●</td><td>◑</td><td>◔</td></tr><tr><td class='mx__t'>Copilot</td><td>◑</td><td>◕</td><td>◕</td><td>◔</td><td>●</td></tr><tr><td class='mx__t'>NotebookLM</td><td>●</td><td>●</td><td>◑</td><td>○</td><td>○</td></tr><tr><td class='mx__t'>Claude</td><td>●</td><td>◕</td><td>●</td><td>●</td><td>◔</td></tr></tbody></table>
+    <div class="mxl">● mạnh nhất · ◕ · ◑ · ◔ · ○ không có. Chọn theo việc, không chọn theo thói quen.</div>
+    <h2>Trước khi dán vào AI: tài liệu vùng nào</h2>
+    <div class="zones"><div class="zn" style="--c:#DC2626"><div class="zn__h"><span>ĐỎ</span>Không đưa</div><div class="zn__b"><i>Văn bản có dấu độ mật</i><i>Dự thảo chưa ký, chưa phát hành</i><i>Hộ chiếu · visa · số điện thoại</i><i>Hồ sơ nhân sự · lương · sức khoẻ</i><i>Hợp đồng · đơn giá · hồ sơ nhà thầu</i><i>Số liệu sản xuất kinh doanh chưa công bố</i></div><div class="zn__r">Không đưa lên AI công cộng. Copilot cơ quan cũng chỉ trong phạm vi được giao, chưa rõ thì hỏi người phụ trách.</div></div><div class="zn" style="--c:#D97706"><div class="zn__h"><span>VÀNG</span>Làm sạch rồi mới đưa</div><div class="zn__b"><i>Danh sách nội bộ → bỏ tên, số điện thoại</i><i>Lịch họp, lịch công tác → bỏ tên người</i><i>Kế hoạch chưa duyệt → thay số bằng dữ liệu mẫu</i><i>Email trao đổi → cắt chữ ký, cắt phần trích dẫn</i><i>Ảnh chụp màn hình → che tên, che đường dẫn</i></div><div class="zn__r">Copilot cơ quan: dùng bản gốc. AI công cộng: chỉ bản đã thay tên và số.</div></div><div class="zn" style="--c:#059669"><div class="zn__h"><span>XANH</span>Dùng bình thường</div><div class="zn__b"><i>Thông cáo, tin đã đăng công khai</i><i>Văn bản pháp quy đã ban hành</i><i>Brochure, bộ nhận diện đã phát hành</i><i>Tình huống mô phỏng, dữ liệu mẫu</i><i>Kiến thức chung, cách viết, cách trình bày</i></div><div class="zn__r">Công cụ nào cũng được. Vẫn phải kiểm lại nội dung trước khi trình và phát hành.</div></div></div>
+    <div class="leaks"><span>✕ Dán cả file vào AI công cộng</span><span>✕ Gửi qua email hoặc Zalo cá nhân</span><span>✕ Chụp màn hình rồi chia sẻ ra ngoài</span><span>✕ Chép vào USB hoặc đám mây cá nhân</span></div>
+    <div class="panel__foot"><span>Mặt 4 · Chọn công cụ và bảo mật dữ liệu</span><span>Lỡ đưa nhầm: báo ngay người phụ trách</span></div>
+  </div>
+  <div class="panel">
+    <div class="brand"><img src="../PVEP.png" alt="PVEP"><div><b style="font-family:Sora,sans-serif;color:var(--g);font-size:9.5pt">Văn phòng PVEP</b><small>Buổi chia sẻ nội bộ · AI cho Văn phòng</small></div></div>
+    <h1>AI cho Văn phòng<br>tờ gập cầm tay</h1>
+    <p class="lead">1Office giữ quy trình, số, hạn và luồng ký. Tờ này chỉ lo phần <b>nội dung trước khi đưa vào 1Office</b>: hỏi AI cho đúng, kiểm cho kỹ, đưa dữ liệu cho đúng chỗ.</p>
+    <h2>Khuôn prompt 06 phần</h2>
+    <div class="sixwrap"><div class="six"><span class="six__n">1</span><div><b>Vai trò</b><small>Cho AI đóng vai ai để trả lời đúng tầm.</small><em>“Bạn là trợ lý Văn phòng…”</em></div></div><div class="six"><span class="six__n">2</span><div><b>Bối cảnh / nguồn</b><small>Tài liệu nào, bản ngày nào, việc gì đang xử lý.</small><em>“Công văn đến đính kèm, 06 trang”</em></div></div><div class="six"><span class="six__n">3</span><div><b>Nhiệm vụ</b><small>Việc cụ thể cần AI làm, 01 câu rõ ràng.</small><em>“Tóm tắt cho Lãnh đạo”</em></div></div><div class="six"><span class="six__n">4</span><div><b>Đối tượng nhận</b><small>Ai đọc bản này, quyết định độ dài và văn phong.</small><em>“Lãnh đạo đọc trong 02 phút”</em></div></div><div class="six"><span class="six__n">5</span><div><b>Đầu ra / định dạng</b><small>Muốn nhận thứ gì: bảng, email, biên bản, checklist.</small><em>“03 phần, gạch đầu dòng”</em></div></div><div class="six"><span class="six__n">6</span><div><b>Ràng buộc</b><small>Điều AI không được tự suy diễn.</small><em>“Chỉ dùng thông tin trong tài liệu; chỗ không rõ ghi Chưa xác định”</em></div></div></div>
+    <div class="formula">Vai trò + Bối cảnh/nguồn + Nhiệm vụ + Đối tượng nhận + Đầu ra + Ràng buộc</div>
+    <h2>Checklist 30 giây trước khi gửi</h2>
+    <div><div class="ck"><span class="ck__box"></span><div><b>Nguồn</b><small>Mọi dữ kiện truy được về tài liệu gốc, đúng bản</small></div></div><div class="ck"><span class="ck__box"></span><div><b>Tên · số · hạn</b><small>Không gán sai chủ thể, không đổi mốc thời gian, cộng lại đúng</small></div></div><div class="ck"><span class="ck__box"></span><div><b>Thể thức</b><small>Đúng mẫu văn bản, văn phong hành chính</small></div></div><div class="ck"><span class="ck__box"></span><div><b>Dữ liệu được phép</b><small>Tài liệu nội bộ chỉ qua Copilot cơ quan; công cụ ngoài chỉ bản đã làm sạch</small></div></div><div class="ck"><span class="ck__box"></span><div><b>Ai kiểm · ai duyệt</b><small>Ghi rõ người soát, người duyệt trước khi phát hành</small></div></div></div>
+    <div class="rule">AI làm <b>bản nháp và xử lý thông tin</b>. Con người chịu trách nhiệm về <b>quyết định, tính đúng đắn, bảo mật và việc phát hành</b>.</div>
+    <div class="panel__foot"><span>Mặt 1 · Khuôn prompt và checklist</span><span>Ban Kiểm soát nội bộ PVEP · 09/2026</span></div>
+  </div>
+</div>
+
+<!-- ===== TRANG 2 (mặt trong): trái = mặt 2, phải = mặt 3 ===== -->
+<div class="sheet">
+  <div class="panel">
+    <h2>06 prompt Văn phòng · 01-03</h2>
+    <div class="pr">
+  <div class="pr__h"><span class="pr__n">01</span><span class="pr__t">Tóm tắt công văn đến</span><span class="pr__tag">Trình Lãnh đạo</span></div>
+  <div class="pr__run"><b>Chạy ở đâu:</b> Copilot trong Word hoặc Outlook, tài khoản cơ quan. Số, ngày, hạn xử lý đã có trong 1Office, không cần AI trích lại.</div>
+  <div class="pr__body"><div class="f"><b>Vai trò:</b> trợ lý Văn phòng.</div><div class="f"><b>Nguồn:</b> công văn đính kèm, chỉ dùng thông tin trong tài liệu này.</div><div class="f"><b>Nhiệm vụ:</b> tóm tắt công văn cho Lãnh đạo.</div><div class="f"><b>Người nhận:</b> Lãnh đạo đọc trong 02 phút.</div><div class="f"><b>Đầu ra:</b> 03 phần ngắn, gạch đầu dòng.</div><div class="f"><b>Yêu cầu:</b></div><ul><li>Phần 1 tóm tắt tối đa 05 dòng: ai gửi, đề nghị gì, liên quan đến việc nào của PVEP</li><li>Phần 2 điểm cần Lãnh đạo quyết hoặc cho ý kiến, mỗi điểm 01 dòng, dẫn mục trong văn bản</li><li>Phần 3 điểm chưa rõ hoặc cần hỏi lại nơi gửi</li><li>Chép nguyên văn con số và mốc thời gian</li><li>Không đề xuất phương án xử lý, không kết luận thay Lãnh đạo</li><li>Nếu nguồn không có thông tin thì ghi Chưa xác định, không tự suy đoán</li></ul></div>
+</div>
+    <div class="pr">
+  <div class="pr__h"><span class="pr__n">02</span><span class="pr__t">Dự thảo văn bản trả lời</span><span class="pr__tag">Bản nháp để trình ký</span></div>
+  <div class="pr__run"><b>Chạy ở đâu:</b> Copilot trong Word, tài khoản cơ quan. Xong bản nháp mới đưa vào luồng trình ký trên 1Office.</div>
+  <div class="pr__body"><div class="f"><b>Vai trò:</b> chuyên viên soạn thảo văn bản hành chính.</div><div class="f"><b>Nguồn:</b> văn bản đến và ý kiến chỉ đạo đính kèm.</div><div class="f"><b>Nhiệm vụ:</b> soạn dự thảo văn bản trả lời.</div><div class="f"><b>Người nhận:</b> [đơn vị nhận], văn phong hành chính, trung tính.</div><div class="f"><b>Đầu ra:</b> bản nháp theo thể thức văn bản hành chính, có chỗ trống cho số và ngày.</div><div class="f"><b>Yêu cầu:</b></div><ul><li>Cấu trúc: căn cứ · nội dung trả lời từng ý theo đúng thứ tự văn bản đến · đề nghị phối hợp · nơi nhận</li><li>Mỗi ý trả lời phải dẫn lại mục tương ứng trong văn bản đến</li><li>Không cam kết mốc thời gian hoặc nguồn lực nếu tài liệu không nêu</li><li>Không dùng từ hoa mỹ, không mở bài dài dòng</li><li>Nếu nguồn không có thông tin thì ghi Chưa xác định, không tự suy đoán</li></ul></div>
+</div>
+    <div class="pr">
+  <div class="pr__h"><span class="pr__n">03</span><span class="pr__t">Bản chuẩn bị trước họp</span><span class="pr__tag">01 trang cho người chủ trì</span></div>
+  <div class="pr__run"><b>Chạy ở đâu:</b> Copilot với hồ sơ nội bộ. NotebookLM chỉ khi tài liệu đã công khai hoặc đã làm sạch tên, số.</div>
+  <div class="pr__body"><div class="f"><b>Vai trò:</b> trợ lý chuẩn bị tài liệu cho người chủ trì.</div><div class="f"><b>Nguồn:</b> hồ sơ họp đính kèm (giấy mời, tài liệu các đơn vị gửi).</div><div class="f"><b>Nhiệm vụ:</b> lập bản chuẩn bị trước họp 01 trang.</div><div class="f"><b>Người nhận:</b> người chủ trì, đọc trong 05 phút.</div><div class="f"><b>Đầu ra:</b> văn bản 01 trang, gạch đầu dòng.</div><div class="f"><b>Yêu cầu:</b></div><ul><li>Thứ tự: mục đích và kết quả cần đạt · thành phần dự · từng nội dung (bối cảnh 02 câu, số liệu nêu trong hồ sơ, điểm cần quyết) · việc kỳ trước còn treo · câu hỏi gợi ý</li><li>Số liệu chép nguyên văn kèm tên tài liệu nguồn</li><li>Không đề xuất chọn phương án, không kết luận thay người chủ trì</li><li>Nếu nguồn không có thông tin thì ghi Chưa xác định, không tự suy đoán</li></ul></div>
+</div>
+    <div class="panel__foot"><span>Mặt 2 · Công văn đến, văn bản trả lời, chuẩn bị họp</span><span>Bản Word để bôi chép: file 06-prompt-Van-phong.docx</span></div>
+  </div>
+  <div class="panel">
+    <h2>06 prompt Văn phòng · 04-06</h2>
+    <div class="pr">
+  <div class="pr__h"><span class="pr__n">04</span><span class="pr__t">Biên bản họp + việc nhập 1Office</span><span class="pr__tag">Từ ghi chú hoặc bản ghi Teams</span></div>
+  <div class="pr__run"><b>Chạy ở đâu:</b> Copilot trong Teams (cuộc họp đã ghi) hoặc trong Word với ghi chú họp. Danh sách việc nhập vào 1Office, không lập bảng theo dõi riêng.</div>
+  <div class="pr__body"><div class="f"><b>Vai trò:</b> thư ký cuộc họp.</div><div class="f"><b>Nguồn:</b> ghi chú họp hoặc bản gỡ băng đính kèm, không dùng thông tin ngoài.</div><div class="f"><b>Nhiệm vụ:</b> soạn biên bản nháp và danh sách việc.</div><div class="f"><b>Người nhận:</b> người chủ trì soát trước, sau đó gửi các đơn vị dự họp.</div><div class="f"><b>Đầu ra:</b> phần 1 biên bản theo thể thức; phần 2 danh sách việc để nhập 1Office.</div><div class="f"><b>Yêu cầu:</b></div><ul><li>Biên bản gồm: thời gian, địa điểm, thành phần, nội dung, ý kiến các đơn vị, kết luận của người chủ trì</li><li>Phân biệt rõ ý kiến, đề nghị, giao nhiệm vụ và kết luận; giữ đúng động từ trong ghi chú, không nâng ý kiến thành kết luận</li><li>Danh sách việc: mỗi dòng gồm việc · đơn vị hoặc người thực hiện · hạn · tài liệu kèm theo</li><li>Chép nguyên văn mốc thời hạn, không đổi cách diễn đạt (trước ngày, trong ngày, chậm nhất)</li><li>Nếu nguồn không có thông tin thì ghi Chưa xác định, không tự suy đoán</li></ul></div>
+</div>
+    <div class="pr">
+  <div class="pr__h"><span class="pr__n">05</span><span class="pr__t">Checklist đoàn khách, sự kiện</span><span class="pr__tag">Kèm kịch bản theo giờ</span></div>
+  <div class="pr__run"><b>Chạy ở đâu:</b> Dữ liệu mô phỏng thì công cụ nào cũng được. Có tên khách, hộ chiếu, số điện thoại thì chỉ Copilot tài khoản cơ quan.</div>
+  <div class="pr__body"><div class="f"><b>Vai trò:</b> chuyên viên tổ chức sự kiện và lễ tân.</div><div class="f"><b>Nguồn:</b> thông tin đoàn và yêu cầu đính kèm; dùng dữ liệu mô phỏng nếu chưa có bản chính thức.</div><div class="f"><b>Nhiệm vụ:</b> lập checklist chuẩn bị và kịch bản theo giờ.</div><div class="f"><b>Người nhận:</b> người trực tại hiện trường, in 01 trang.</div><div class="f"><b>Đầu ra:</b> phần 1 checklist theo nhóm; phần 2 bảng giờ · việc · người phụ trách.</div><div class="f"><b>Yêu cầu:</b></div><ul><li>Nhóm checklist: phòng họp và thiết bị · tài liệu · lễ tân và khánh tiết · phiên dịch · phương tiện đi lại · quà tặng · ăn uống · truyền thông · an ninh và bảo mật</li><li>Mỗi dòng ghi rõ điều kiện coi là đã xong và mốc phải xong trước</li><li>Bổ sung mục phương án dự phòng cho ít nhất 03 tình huống</li><li>Không tự chốt nhà cung cấp, không ước tính chi phí</li><li>Nếu nguồn không có thông tin thì ghi Chưa xác định, không tự suy đoán</li></ul></div>
+</div>
+    <div class="pr">
+  <div class="pr__h"><span class="pr__n">06</span><span class="pr__t">Truyền thông: tin + hỏi đáp</span><span class="pr__tag">01 nguồn, nhiều đầu ra</span></div>
+  <div class="pr__run"><b>Chạy ở đâu:</b> Nội dung đã phê duyệt và công khai thì ChatGPT hoặc Claude, đính kèm mẫu thương hiệu PVEP. Chưa công bố thì Copilot.</div>
+  <div class="pr__body"><div class="f"><b>Vai trò:</b> chuyên viên truyền thông nội bộ.</div><div class="f"><b>Nguồn:</b> nội dung đã được phê duyệt đính kèm, đây là nguồn duy nhất.</div><div class="f"><b>Nhiệm vụ:</b> chuyển thành 05 đầu ra.</div><div class="f"><b>Người nhận:</b> mỗi đầu ra một nhóm người đọc khác nhau.</div><div class="f"><b>Đầu ra:</b> tin đăng trang thông tin · email nội bộ · chú thích ảnh mạng xã hội · ý phát biểu cho lãnh đạo · hỏi đáp dự kiến cho báo chí.</div><div class="f"><b>Yêu cầu:</b></div><ul><li>Cả 05 bản chỉ dùng dữ kiện có trong nguồn, không thêm số liệu, phát ngôn, cam kết hay đánh giá</li><li>Độ dài từng bản: tin 250-350 từ, email 120 từ, chú thích ảnh 60 từ, ý phát biểu 05-07 gạch đầu dòng</li><li>Phần hỏi đáp chỉ nêu câu hỏi dự kiến và phạm vi trả lời, không tự trả lời thay người phát ngôn</li><li>Nếu nguồn không có thông tin thì ghi Chưa xác định, không tự suy đoán</li></ul></div>
+</div>
+    <div class="panel__foot"><span>Mặt 3 · Biên bản, đón đoàn, truyền thông</span><span>Chỗ không rõ: ghi “Chưa xác định”, không tự suy đoán</span></div>
+  </div>
+</div>
+
+<div class="print-note"><b>Cách in:</b> Ctrl+P, khổ A4 ngang, lề 0, bật “Background graphics”, in 2 mặt lật theo cạnh dài. Gập đôi theo vạch đứt: mặt có logo là bìa trước.</div>
+</body>
+</html>
