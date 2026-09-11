@@ -101,6 +101,25 @@ Các file `assets/moda/`, `assets/7_nhom_rui_ro.png` và thư mục `handout/` l
 nguyên của bản deck trước, hiện không còn được `index.html` tham chiếu - giữ lại
 để tra cứu, xóa được nếu không cần.
 
+## Hiển thị trên mọi màn hình
+
+Deck tự thích ứng, không cần bản riêng cho từng thiết bị:
+
+| Nhóm thiết bị | Cách deck xử lý |
+|---|---|
+| TV / màn hình lớn (2K, 4K, 21:9) | Toàn bộ slide được **phóng đồng loạt** tối đa 1,7 lần khi màn lớn hơn khung thiết kế 1920×1080, nên không còn khoảng trắng thừa; mọi slide phóng cùng một tỷ lệ để chuyển trang không nhảy cỡ chữ |
+| Desktop · laptop (1366×768 → 4K) | Cỡ chữ tính theo `--su` = 1% bề rộng khung 16:9 lớn nhất lọt vào màn hình, nên co theo **cả chiều ngang lẫn chiều dọc**; slide nào nội dung dày thì tự thu vừa khung, không cắt chữ |
+| Máy tính bảng nằm ngang · màn 4:3 | Như desktop, bộ auto-fit lo phần nội dung tràn |
+| Điện thoại **nằm ngang** | Trang được dựng ở **khung ảo 1180px** rồi thu cả trang vừa bề ngang máy → giữ nguyên bố cục trình chiếu 2 cột thay vì bẻ thành một cột dài |
+| Điện thoại · máy tính bảng **dựng đứng** | Chuyển sang **chế độ cuộn dọc**: slide cao tự nhiên, vuốt để chuyển, ẩn thanh mục lục bên trái |
+| Máy có tai thỏ | Nội dung chừa `safe-area`, không bị khuyết góc khi xoay ngang |
+
+Cơ chế: `--su` (thang chữ hai chiều) + bộ **auto-fit** trong JS đo từng slide rồi
+áp `transform: scale()` — thu nhỏ khi tràn, phóng to khi dư chỗ. Trường hợp cực
+đoan (cửa sổ quá thấp mà slide quá dày) thì slide đó tự cho **cuộn trong slide**
+thay vì cắt mất nội dung. Thêm/sửa slide không cần chỉnh gì thêm, bộ auto-fit tự
+đo lại khi đổi kích thước cửa sổ, xoay máy, mở accordion hoặc ảnh tải xong.
+
 ## In PDF
 
 Ctrl/Cmd + P → khổ **A4 ngang**, lề 0, bật *Background graphics*. Mỗi slide

@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <!-- CSP: chỉ cho phép tài nguyên nội bộ + Google Fonts + iframe Mentimeter; chặn mọi script/frame/object lạ -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' file:; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' file: https://fonts.gstatic.com; img-src 'self' file: data:; media-src 'self' file:; frame-src 'self' file: https://www.mentimeter.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
@@ -34,7 +34,7 @@
   --ac-ease:cubic-bezier(.22,.8,.18,1); --ac-ease-bounce:cubic-bezier(.34,1.56,.64,1);
   --ac-dur:.8s; --ac-stagger:80ms;
 
-  --rail:250px;
+  --rail:clamp(250px, calc(13 * var(--su)), 460px);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 
@@ -44,26 +44,46 @@
 html, body{ height:100%; overflow-x:hidden; }
 html{ scroll-snap-type:y mandatory; scroll-behavior:smooth; }
 .slide{
-  width:100vw; height:100vh; height:100dvh; overflow:hidden;
+  width:100%; height:100vh; height:100svh; height:100dvh; overflow:hidden;
   scroll-snap-align:start; display:flex; flex-direction:column; position:relative;
 }
 .slide-content{
   flex:1; display:flex; flex-direction:column; justify-content:center;
-  max-height:100%; overflow:hidden; padding:var(--slide-padding);
+  max-height:100%; overflow:hidden;
+  padding:calc(var(--slide-padding) + var(--safe-t)) calc(var(--slide-padding) + var(--safe-r))
+          calc(var(--slide-padding) + var(--safe-b)) calc(var(--slide-padding) + var(--safe-l));
 }
 :root{
-  --title-size:clamp(2rem, 6.5vh, 4.4rem);
-  --h2-size:clamp(1.6rem, 4.8vh, 3.2rem);
-  --h3-size:clamp(1.3rem, 3.8vh, 2.4rem);
-  --body-size:clamp(1.2rem, 3.2vh, 2.1rem);
-  --small-size:clamp(1.02rem, 2.7vh, 1.7rem);
-  --slide-padding:clamp(1.2rem, 4.5vh, 4rem);
-  --content-gap:clamp(0.8rem, 2.5vh, 2.2rem);
-  --element-gap:clamp(0.4rem, 1.5vh, 1.4rem);
+  /* --su = 1% chiều rộng khung 16:9 LỚN NHẤT lọt vào màn hình hiện tại.
+     Chữ vì thế co theo CẢ chiều ngang lẫn chiều dọc: màn 16:9 (TV, laptop, FHD/2K/4K)
+     cho đúng kích thước như cũ; màn 4:3, 21:9, điện thoại xoay ngang (rất thấp)
+     thì tự thu lại nên không bị tràn / bị cắt chữ. */
+  --su:min(1vw, 1.7778vh);
+  --title-size:clamp(1.35rem, calc(3.66 * var(--su)), 4.4rem);
+  --h2-size:clamp(1.12rem, calc(2.67 * var(--su)), 3.2rem);
+  --h3-size:clamp(1rem,    calc(2.00 * var(--su)), 2.4rem);
+  --body-size:clamp(.86rem, calc(1.75 * var(--su)), 2.1rem);
+  --small-size:clamp(.76rem, calc(1.42 * var(--su)), 1.7rem);
+  --slide-padding:clamp(.85rem, calc(2.53 * var(--su)), 4rem);
+  --content-gap:clamp(.5rem,  calc(1.41 * var(--su)), 2.2rem);
+  --element-gap:clamp(.3rem,  calc(0.84 * var(--su)), 1.4rem);
+  /* vùng an toàn tai thỏ (iPhone xoay ngang cắt trái/phải) */
+  --safe-t:env(safe-area-inset-top, 0px);
+  --safe-r:env(safe-area-inset-right, 0px);
+  --safe-b:env(safe-area-inset-bottom, 0px);
+  --safe-l:env(safe-area-inset-left, 0px);
 }
 .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:clamp(0.5rem,1.5vw,1rem); }
 img{ max-width:100%; object-fit:contain; }
-@media (max-height:700px){ :root{ --slide-padding:clamp(0.75rem,3vw,2rem); --content-gap:clamp(0.4rem,1.5vw,1rem); --title-size:clamp(1.25rem,4.5vw,2.5rem); } }
+/* Màn hình thấp: laptop 768p, cửa sổ nhúng, điện thoại xoay ngang */
+@media (max-height:700px){
+  :root{ --slide-padding:clamp(.6rem, calc(2.1 * var(--su)), 2rem);
+         --content-gap:clamp(.35rem, calc(1.15 * var(--su)), 1.1rem);
+         --element-gap:clamp(.22rem, calc(.68 * var(--su)), .8rem); }
+}
+@media (max-height:520px){
+  :root{ --slide-padding:clamp(.45rem, calc(1.7 * var(--su)), 1.2rem); }
+}
 @media (prefers-reduced-motion:reduce){ *,*::before,*::after{ animation-duration:0.01ms!important; transition-duration:0.2s!important; } html{ scroll-behavior:auto; } }
 
 /* ============================================================
@@ -112,7 +132,7 @@ body{
 }
 .wrap{ width:min(95%, 1650px); margin-inline:auto; position:relative; z-index:2; }
 .wrap--wide{ width:min(98%, 1850px); }
-@media (min-width:1000px){ .slide-content{ padding-left:calc(var(--slide-padding) + var(--rail)); } }
+@media (min-width:1000px){ .slide-content{ padding-left:calc(var(--slide-padding) + var(--rail) + var(--safe-l)); } }
 
 .head-center{ text-align:center; display:flex; flex-direction:column; gap:.4rem; align-items:center; margin-bottom:clamp(.6rem,2vh,1.2rem); }
 .eyebrow{ font-family:var(--font-display); font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--pvep-blue); font-size:clamp(.64rem,1vw,.84rem); }
@@ -1284,7 +1304,7 @@ body.hero-mode .hint{ color:rgba(255,255,255,.72); }
 /* ============================================================
    MOBILE
    ============================================================ */
-@media (max-width:900px){
+@media (max-width:900px), (orientation:portrait) and (max-width:1180px){
   .two,.routes,.sw,.promptwrap,.menti,.dash9,.chal,.clinic,.sum3,.cards--3,.agenda,.ba,.livewrap,.promptkit{ grid-template-columns:1fr !important; display:grid; }
   .pitfalls{ grid-template-columns:repeat(2,1fr) !important; }
   .road{ flex-direction:column; align-items:stretch; gap:.7rem; }
@@ -1297,12 +1317,14 @@ body.hero-mode .hint{ color:rgba(255,255,255,.72); }
 @media (max-width:560px){
   .pitfalls{ grid-template-columns:1fr !important; }
 }
-@media (max-width:768px){
+@media (max-width:768px), (orientation:portrait) and (max-width:1180px){
   :root{
-    --title-size:clamp(1.25rem,5.4vw,1.9rem);
-    --body-size:clamp(.9rem,3.6vw,1.05rem);
-    --small-size:clamp(.8rem,3.1vw,.95rem);
-    --slide-padding:clamp(1rem,5vw,1.6rem);
+    --title-size:clamp(1.25rem,5.4vw,2.6rem);
+    --h2-size:clamp(1.1rem,4.4vw,2rem);
+    --h3-size:clamp(1rem,3.9vw,1.6rem);
+    --body-size:clamp(.9rem,3.6vw,1.35rem);
+    --small-size:clamp(.8rem,3.1vw,1.15rem);
+    --slide-padding:clamp(1rem,5vw,2.2rem);
   }
   html{ scroll-snap-type:y proximity; }
   .slide{ height:auto; min-height:100vh; min-height:100svh; overflow:visible; }
@@ -2924,6 +2946,100 @@ body.hero-mode .hint{ color:rgba(255,255,255,.72); }
 .picbox__cap{ position:absolute; left:0; right:0; bottom:clamp(.5rem,1.6vh,1rem); text-align:center;
   color:rgba(255,255,255,.72); font-size:clamp(.62rem,1.3vh,.82rem); pointer-events:none; }
 @media print{ .picbox{ display:none !important; } .gptpic__hint{ display:none !important; } }
+
+/* ============================================================
+   FIT MỌI ĐỘ PHÂN GIẢI  ·  TV / desktop / laptop / tablet / điện thoại
+   Đặt cuối bảng style để ghi đè đúng thứ tự.
+   ============================================================ */
+
+/* --- 1. Khung chrome (rail, counter, footer, watermark) lớn dần theo màn hình.
+       max(<giá trị cũ>, <theo --su>) ⇒ từ 1920px trở xuống giữ nguyên như cũ,
+       trên 2K/4K/TV thì phóng theo tỷ lệ nên không còn chữ li ti. --- */
+@media screen and (min-width:1400px){
+  .rail__title{ font-size:max(.92rem, calc(.767 * var(--su))); }
+  .rail__sub{   font-size:max(.58rem, calc(.483 * var(--su))); }
+  .rail__who{   font-size:max(.72rem, calc(.600 * var(--su))); }
+  .rail__who small{ font-size:max(.56rem, calc(.467 * var(--su))); }
+  .rail__item{  font-size:max(.74rem, calc(.617 * var(--su))); }
+  .rail__num{   font-size:max(.70rem, calc(.583 * var(--su))); }
+  .rail__item--sub{ font-size:max(.66rem, calc(.550 * var(--su))); }
+  .rail__brand img{ width:max(34px, calc(1.77 * var(--su))) !important; height:auto !important; }
+  .counter{ font-size:max(.95rem, calc(.792 * var(--su))); }
+  .hint{    font-size:max(.66rem, calc(.550 * var(--su))); }
+  .brand-badge b{ font-size:max(.72rem, calc(.600 * var(--su))); }
+  .wmark{   font-size:max(.58rem, calc(.483 * var(--su))); }
+  .deckfoot{ font-size:clamp(.55rem, calc(.60 * var(--su)), 1.25rem); }
+}
+
+/* --- 2. Vùng an toàn tai thỏ cho chrome cố định --- */
+.counter{ top:calc(1.05rem + var(--safe-t)); right:calc(1.4rem + var(--safe-r)); }
+.hint{ bottom:calc(.9rem + var(--safe-b)); right:calc(1.4rem + var(--safe-r)); }
+.brand-badge{ top:calc(.85rem + var(--safe-t)); left:calc(1rem + var(--safe-l)); }
+.deckfoot{ padding-bottom:calc(.32rem + var(--safe-b)); }
+.rail{ padding-left:calc(1rem + var(--safe-l)); }
+
+/* --- 3. Điện thoại XOAY NGANG và mọi màn rất thấp:
+       giữ nguyên dạng "một slide một màn hình" nhưng dọn hết chrome ăn chỗ,
+       phần co nội dung do bộ auto-fit trong JS lo. --- */
+@media screen and (max-height:520px) and (orientation:landscape){
+  .deckfoot, .hint, .mhint{ display:none !important; }
+  .counter{ top:calc(.35rem + var(--safe-t)); right:calc(.45rem + var(--safe-r));
+            font-size:.66rem; padding:.16rem .5rem; }
+  .wmark{ display:none; }
+  .slide{ height:100svh; }
+  .mentiframe{ max-height:64svh; }
+  .vtoggle{ transform:scale(.8); transform-origin:top right; }
+}
+/* điện thoại ngang thường rộng 640-1000px: bảo đảm rail ẩn, không chiếm chỗ */
+@media screen and (max-width:1024px) and (max-height:560px) and (orientation:landscape){
+  .rail{ display:none !important; }
+  .slide-content{ padding-left:calc(var(--slide-padding) + var(--safe-l)) !important; }
+  .deckfoot{ left:0 !important; }
+}
+
+/* --- 3b. KHUNG ẢO cho ĐIỆN THOẠI XOAY NGANG (body.vcanvas, bật bằng JS) ---
+   Điện thoại nằm ngang được dựng trang ở bề rộng ảo 1180px rồi trình duyệt thu
+   cả trang về đúng bề rộng máy. Nhờ vậy slide giữ nguyên bố cục 2 cột như trên
+   laptop thay vì bị xếp chồng thành một cột dài, chỉ nhỏ lại theo tỷ lệ. */
+body.vcanvas .rail{ display:none !important; }
+body.vcanvas .hint,
+body.vcanvas .mhint,
+body.vcanvas .wmark{ display:none !important; }
+body.vcanvas .brand-badge{ display:flex; }
+body.vcanvas .slide-content{ padding-left:calc(var(--slide-padding) + var(--safe-l)) !important; }
+body.vcanvas .deckfoot{ left:0 !important; padding-top:.2rem; padding-bottom:calc(.2rem + var(--safe-b)); }
+body.vcanvas .counter{ top:calc(.5rem + var(--safe-t)); right:calc(.7rem + var(--safe-r)); }
+body.vcanvas .slide{ height:100svh; }   /* luôn thấy trọn slide kể cả khi thanh địa chỉ hiện */
+
+/* --- 4. Cảm ứng: snap kiểu "proximity" cho mượt, chặn kéo quá đà --- */
+@media (pointer:coarse){
+  html{ scroll-snap-type:y proximity; }
+  body{ overscroll-behavior-y:contain; }
+}
+
+/* --- 5. Màn siêu rộng (21:9, 32:9) và màn 4:3 / vuông:
+       nội dung neo giữa, không kéo dài dòng chữ quá 90 ký tự. --- */
+@media screen and (min-aspect-ratio:2/1){
+  .wrap{ width:min(92%, calc(86 * var(--su))); }
+  .wrap--wide{ width:min(94%, calc(96 * var(--su))); }
+}
+
+/* --- 5b. Van an toàn: slide quá dày so với màn quá thấp thì cuộn trong slide,
+       không bao giờ cắt mất nội dung (auto-fit gắn class này khi cần) --- */
+.slide-content.sc-scroll{
+  overflow-y:auto; justify-content:flex-start;
+  overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+}
+
+/* --- 6. Không để phát sinh thanh cuộn ngang ở bất kỳ độ phân giải nào --- */
+html, body{ max-width:100%; }
+
+/* --- 7. IN PDF A4: neo lại --su để cỡ chữ in đúng như trước --- */
+@media print{
+  :root{ --su:min(1.30vw, 1.83vh); }
+  .slide{ width:297mm !important; }
+}
 </style>
 </head>
 <body>
@@ -2931,7 +3047,7 @@ body.hero-mode .hint{ color:rgba(255,255,255,.72); }
 <!-- nền offshore mờ cho các slide nội dung (slide 1 có video riêng che lên) -->
 <div class="oilbg" aria-hidden="true"></div>
 <div class="progress"><div class="progress__fill" id="progressFill"></div></div>
-<div class="brand-badge" aria-hidden="true"><span class="logo">PVEP</span><b>PVEP</b></div>
+<div class="brand-badge" aria-hidden="true"><span class="logo"><img src="PVEP.png" alt="" style="width:18px;height:18px;object-fit:contain"></span><b>PVEP</b></div>
 
 <!-- ===================== RAIL ===================== -->
 <nav class="rail" aria-label="Chương">
@@ -6166,32 +6282,187 @@ body.hero-mode .hint{ color:rgba(255,255,255,.72); }
   b.addEventListener("click",function(){if(v.paused){var p=v.play();if(p&&p.catch)p.catch(function(){sync();});}else{v.pause();}});
   v.addEventListener("play",sync);v.addEventListener("pause",sync);sync();})();
 
-/* ===== Auto-fit: co gọn nội dung mỗi slide cho vừa khung ===== */
+/* ===== KHUNG ẢO CHO ĐIỆN THOẠI XOAY NGANG =====
+   Máy để ngang: đặt lại meta viewport về bề rộng ảo 1180px -> trình duyệt dựng
+   trang y như trên laptop rồi thu nhỏ cả trang vừa bề ngang máy. Slide giữ đúng
+   bố cục trình chiếu thay vì bị bẻ thành một cột dài phải cuộn.
+   Xoay dọc lại thì trả về width=device-width (chế độ cuộn dọc).
+   ================================================================ */
 (function(){
-  var MOBILE=768;
-  function fitOne(s){
-    var sc=s.querySelector(".slide-content"); if(!sc)return;
-    var child=sc.children[0]; if(!child)return;
-    child.style.transformOrigin="center center"; child.style.transform="none";
-    var cs=getComputedStyle(sc);
-    var pad=parseFloat(cs.paddingTop||0)+parseFloat(cs.paddingBottom||0);
-    var avail=sc.clientHeight-pad, need=child.scrollHeight;
-    if(need>avail+1){ var k=Math.max(0.74, avail/need); child.style.transform="scale("+k+")"; }
+  var meta = document.querySelector('meta[name="viewport"]');
+  if(!meta || !window.matchMedia) return;
+  var BASE   = "width=device-width, initial-scale=1.0, viewport-fit=cover";
+  var CANVAS = 1180;
+  var VP     = "width=" + CANVAS + ", viewport-fit=cover";
+  var on = null;
+
+  function phoneLandscape(){
+    if(!matchMedia("(pointer:coarse)").matches) return false;          /* chỉ máy cảm ứng */
+    var sw = screen.width || 0, sh = screen.height || 0;
+    var shortSide = Math.min(sw, sh);
+    if(!shortSide || shortSide > 560) return false;                     /* tablet/TV thì thôi */
+    return window.innerWidth > window.innerHeight;                      /* đang nằm ngang */
   }
+  function apply(){
+    var want = phoneLandscape();
+    if(want === on) return;
+    on = want;
+    meta.setAttribute("content", want ? VP : BASE);
+    document.body.classList.toggle("vcanvas", want);
+    window.dispatchEvent(new Event("pvep:viewportmode"));
+  }
+  apply();
+  window.addEventListener("orientationchange", function(){ setTimeout(apply, 120); setTimeout(apply, 500); });
+  window.addEventListener("resize", function(){ setTimeout(apply, 60); });
+})();
+
+/* ===== AUTO-FIT v2 - ép mỗi slide vừa khít MỌI độ phân giải =====
+   · Thu nhỏ khi nội dung tràn (cả chiều cao lẫn chiều ngang) -> không bao giờ bị cắt chữ.
+   · Phóng to khi màn hình lớn hơn khung thiết kế 1920x1080 (2K, 4K, TV) -> không bỏ phí màn hình.
+   · Tắt ở chế độ cuộn dọc (điện thoại/máy tính bảng dựng đứng) vì ở đó slide tự dài ra.
+   ================================================================= */
+(function(){
+  var FLOW_Q = "(max-width:768px), (orientation:portrait) and (max-width:1180px)";
+  var mqFlow = window.matchMedia ? window.matchMedia(FLOW_Q) : null;
+  function minK(){           /* sàn thu nhỏ: màn càng thấp càng cho thu sâu để không bị cắt chữ */
+    return window.innerHeight < 560 ? 0.30 : 0.42;
+  }
+  var MAX_K = 1.70;          /* phóng tối đa 170% cho TV/4K */
+  var REF_W = 1920, REF_H = 1080;   /* khung thiết kế gốc của deck */
+
+  function isFlow(){ return mqFlow ? mqFlow.matches : window.innerWidth <= 768; }
+  function isPrint(){ return !!(window.matchMedia && window.matchMedia("print").matches); }
+
+  /* trần phóng to: chỉ tính theo kích thước màn hình, không theo từng slide,
+     để các slide không bị to nhỏ khác nhau khi chuyển trang */
+  function upCap(){
+    if(isPrint()) return 1;
+    var vw = window.innerWidth, vh = window.innerHeight;
+    if(!vw || !vh) return 1;
+    var k = Math.min(vw / REF_W, vh / REF_H);
+    return Math.max(1, Math.min(MAX_K, k));
+  }
+
+  function pairs(){
+    var out = [];
+    document.querySelectorAll(".slide-content").forEach(function(sc){
+      var c = sc.children[0];
+      if(c) out.push([sc, c]);
+    });
+    return out;
+  }
+
+  function reset(sc, c){
+    sc.classList.remove("sc-scroll");
+    c.style.transform = "";
+    c.style.marginBottom = "";
+  }
+
   function fitAll(){
-    if(window.innerWidth<=MOBILE){ document.querySelectorAll(".slide-content>*").forEach(function(c){c.style.transform="";}); return; }
-    document.querySelectorAll(".slide").forEach(fitOne);
+    var ps = pairs();
+    if(!ps.length) return;
+
+    if(isFlow()){
+      ps.forEach(function(p){ reset(p[0], p[1]); });
+      return;
+    }
+
+    /* B1 - GHI: trả mọi slide về tỷ lệ 1:1 trước khi đo */
+    ps.forEach(function(p){
+      p[1].style.transformOrigin = "center center";
+      p[1].style.transform = "none";
+    });
+
+    /* B2 - ĐỌC: đo một lượt (gom lại để trình duyệt chỉ phải dựng layout 1 lần) */
+    var up = upCap();
+    var meas = ps.map(function(p){
+      var sc = p[0], c = p[1], cs = getComputedStyle(sc);
+      var availH = sc.clientHeight - (parseFloat(cs.paddingTop)||0)  - (parseFloat(cs.paddingBottom)||0);
+      var availW = sc.clientWidth  - (parseFloat(cs.paddingLeft)||0) - (parseFloat(cs.paddingRight)||0);
+      var needH  = Math.max(c.scrollHeight, c.offsetHeight);
+      var needW  = Math.max(c.scrollWidth,  c.offsetWidth);
+      /* null = slide đang ẩn (.slide-off) hoặc chưa dựng xong -> không tính vào tỷ lệ chung */
+      if(availH <= 0 || availW <= 0 || !needH || !needW) return null;
+      return { cap:Math.min(availH / needH, availW / needW), needH:needH };
+    });
+    var caps = meas.map(function(m){ return m ? m.cap : null; });
+
+    /* Tỷ lệ PHÓNG TO dùng chung cho cả deck: lấy mức nhỏ nhất trong các slide còn
+       dư chỗ, để mọi slide phóng bằng nhau - chuyển trang không bị nhảy cỡ chữ.
+       Slide nào chật (capacity < 1) thì vẫn tự thu riêng ở B3. */
+    if(up > 1){
+      var room = caps.filter(function(c){ return c !== null && c >= 1; });
+      if(room.length) up = Math.max(1, Math.min(up, Math.min.apply(null, room)));
+    }
+
+    /* B3 - GHI: áp tỷ lệ */
+    var floor = minK();
+    ps.forEach(function(p, i){
+      var sc = p[0], c = p[1], m = meas[i];
+      if(m === null){ reset(sc, c); return; }                       /* slide ẩn: để nguyên */
+
+      /* Van an toàn: thu tới sàn mà vẫn không vừa (màn cực thấp, nội dung cực dày)
+         -> cho cuộn trong slide, tuyệt đối không cắt mất nội dung.
+         Neo gốc phóng ở mép trên và bù margin âm để vùng cuộn đúng bằng phần nhìn thấy. */
+      if(m.cap < floor){
+        var kf = floor;
+        sc.classList.add("sc-scroll");
+        c.style.transformOrigin = "top center";
+        c.style.transform = "scale(" + kf + ")";
+        c.style.marginBottom = (-(m.needH * (1 - kf))).toFixed(1) + "px";
+        return;
+      }
+
+      sc.classList.remove("sc-scroll");
+      c.style.marginBottom = "";
+      c.style.transformOrigin = "center center";
+      var k = Math.min(m.cap, up);
+      if(k > 0.995 && k < 1.005){ c.style.transform = ""; return; }
+      c.style.transform = "scale(" + (Math.round(k * 1000) / 1000) + ")";
+    });
   }
-  var t; function schedule(){clearTimeout(t);t=setTimeout(fitAll,120);}
-  window.addEventListener("resize",schedule);
-  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(schedule);
-  if(window.ResizeObserver){ var ro=new ResizeObserver(schedule); document.querySelectorAll(".slide-content").forEach(function(sc){ if(sc.children[0]) ro.observe(sc.children[0]); }); }
-  function boot(){ fitAll(); setTimeout(fitAll,300); setTimeout(fitAll,900); setTimeout(fitAll,1800); }
-  if(document.readyState==="complete") boot(); else window.addEventListener("load",boot);
+
+  var t = null;
+  function schedule(){
+    if(t) clearTimeout(t);
+    t = setTimeout(function(){
+      t = null;
+      if(window.requestAnimationFrame) requestAnimationFrame(fitAll); else fitAll();
+    }, 120);
+  }
+
+  window.addEventListener("resize", schedule);
+  window.addEventListener("pvep:viewportmode", function(){ setTimeout(fitAll, 80); setTimeout(fitAll, 400); });
+  window.addEventListener("orientationchange", function(){ setTimeout(fitAll, 260); setTimeout(fitAll, 700); });
+  if(window.visualViewport && window.visualViewport.addEventListener)
+    window.visualViewport.addEventListener("resize", schedule);
+  if(mqFlow){
+    if(mqFlow.addEventListener) mqFlow.addEventListener("change", schedule);
+    else if(mqFlow.addListener) mqFlow.addListener(schedule);
+  }
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+
+  /* nội dung tự đổi chiều cao (accordion, tab prompt, ảnh vừa tải xong) -> đo lại */
+  if(window.ResizeObserver){
+    var ro = new ResizeObserver(schedule);
+    pairs().forEach(function(p){ ro.observe(p[1]); });
+  }
+  document.addEventListener("load", function(e){
+    if(e.target && e.target.tagName === "IMG") schedule();
+  }, true);
+
+  function boot(){ fitAll(); setTimeout(fitAll, 300); setTimeout(fitAll, 900); setTimeout(fitAll, 1800); }
+  if(document.readyState === "complete") boot(); else window.addEventListener("load", boot);
   fitAll();
-  window.addEventListener("beforeprint",fitAll);
-  if(window.matchMedia){var mqp=window.matchMedia("print");var hp=function(e){if(e.matches)fitAll();};
-    if(mqp.addEventListener)mqp.addEventListener("change",hp);else if(mqp.addListener)mqp.addListener(hp);}
+
+  window.addEventListener("beforeprint", fitAll);
+  window.addEventListener("afterprint", schedule);
+  if(window.matchMedia){
+    var mqp = window.matchMedia("print");
+    var hp = function(){ fitAll(); };
+    if(mqp.addEventListener) mqp.addEventListener("change", hp);
+    else if(mqp.addListener) mqp.addListener(hp);
+  }
 })();
 
 /* ===== Moda gallery - bộ slide thật (Cách 2) ===== */
