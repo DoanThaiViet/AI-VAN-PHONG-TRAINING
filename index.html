@@ -3024,6 +3024,14 @@ body.vcanvas .slide{ height:100svh; }   /* luôn thấy trọn slide kể cả k
   .wrap--wide{ width:min(94%, calc(96 * var(--su))); }
 }
 
+/* --- 5b. Van an toàn: slide quá dày so với màn quá thấp thì cuộn trong slide,
+       không bao giờ cắt mất nội dung (auto-fit gắn class này khi cần) --- */
+.slide-content.sc-scroll{
+  overflow-y:auto; justify-content:flex-start;
+  overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+}
+
 /* --- 6. Không để phát sinh thanh cuộn ngang ở bất kỳ độ phân giải nào --- */
 html, body{ max-width:100%; }
 
@@ -6344,12 +6352,18 @@ html, body{ max-width:100%; }
     return out;
   }
 
+  function reset(sc, c){
+    sc.classList.remove("sc-scroll");
+    c.style.transform = "";
+    c.style.marginBottom = "";
+  }
+
   function fitAll(){
     var ps = pairs();
     if(!ps.length) return;
 
     if(isFlow()){
-      ps.forEach(function(p){ p[1].style.transform = ""; });
+      ps.forEach(function(p){ reset(p[0], p[1]); });
       return;
     }
 
@@ -6361,7 +6375,7 @@ html, body{ max-width:100%; }
 
     /* B2 - ĐỌC: đo một lượt (gom lại để trình duyệt chỉ phải dựng layout 1 lần) */
     var up = upCap();
-    var caps = ps.map(function(p){
+    var meas = ps.map(function(p){
       var sc = p[0], c = p[1], cs = getComputedStyle(sc);
       var availH = sc.clientHeight - (parseFloat(cs.paddingTop)||0)  - (parseFloat(cs.paddingBottom)||0);
       var availW = sc.clientWidth  - (parseFloat(cs.paddingLeft)||0) - (parseFloat(cs.paddingRight)||0);
@@ -6369,8 +6383,9 @@ html, body{ max-width:100%; }
       var needW  = Math.max(c.scrollWidth,  c.offsetWidth);
       /* null = slide đang ẩn (.slide-off) hoặc chưa dựng xong -> không tính vào tỷ lệ chung */
       if(availH <= 0 || availW <= 0 || !needH || !needW) return null;
-      return Math.min(availH / needH, availW / needW);
+      return { cap:Math.min(availH / needH, availW / needW), needH:needH };
     });
+    var caps = meas.map(function(m){ return m ? m.cap : null; });
 
     /* Tỷ lệ PHÓNG TO dùng chung cho cả deck: lấy mức nhỏ nhất trong các slide còn
        dư chỗ, để mọi slide phóng bằng nhau - chuyển trang không bị nhảy cỡ chữ.
@@ -6381,13 +6396,29 @@ html, body{ max-width:100%; }
     }
 
     /* B3 - GHI: áp tỷ lệ */
+    var floor = minK();
     ps.forEach(function(p, i){
-      if(caps[i] === null){ p[1].style.transform = ""; return; }   /* slide ẩn: để nguyên */
-      var k = Math.min(caps[i], up);
-      var floor = minK();
-      if(k < floor) k = floor;
-      if(k > 0.995 && k < 1.005){ p[1].style.transform = ""; return; }
-      p[1].style.transform = "scale(" + (Math.round(k * 1000) / 1000) + ")";
+      var sc = p[0], c = p[1], m = meas[i];
+      if(m === null){ reset(sc, c); return; }                       /* slide ẩn: để nguyên */
+
+      /* Van an toàn: thu tới sàn mà vẫn không vừa (màn cực thấp, nội dung cực dày)
+         -> cho cuộn trong slide, tuyệt đối không cắt mất nội dung.
+         Neo gốc phóng ở mép trên và bù margin âm để vùng cuộn đúng bằng phần nhìn thấy. */
+      if(m.cap < floor){
+        var kf = floor;
+        sc.classList.add("sc-scroll");
+        c.style.transformOrigin = "top center";
+        c.style.transform = "scale(" + kf + ")";
+        c.style.marginBottom = (-(m.needH * (1 - kf))).toFixed(1) + "px";
+        return;
+      }
+
+      sc.classList.remove("sc-scroll");
+      c.style.marginBottom = "";
+      c.style.transformOrigin = "center center";
+      var k = Math.min(m.cap, up);
+      if(k > 0.995 && k < 1.005){ c.style.transform = ""; return; }
+      c.style.transform = "scale(" + (Math.round(k * 1000) / 1000) + ")";
     });
   }
 

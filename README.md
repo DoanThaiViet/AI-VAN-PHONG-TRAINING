@@ -115,9 +115,10 @@ Deck tự thích ứng, không cần bản riêng cho từng thiết bị:
 | Máy có tai thỏ | Nội dung chừa `safe-area`, không bị khuyết góc khi xoay ngang |
 
 Cơ chế: `--su` (thang chữ hai chiều) + bộ **auto-fit** trong JS đo từng slide rồi
-áp `transform: scale()` — thu nhỏ khi tràn, phóng to khi dư chỗ. Thêm/sửa slide
-không cần chỉnh gì thêm, bộ auto-fit tự đo lại khi đổi kích thước cửa sổ, xoay
-máy, mở accordion hoặc ảnh tải xong.
+áp `transform: scale()` — thu nhỏ khi tràn, phóng to khi dư chỗ. Trường hợp cực
+đoan (cửa sổ quá thấp mà slide quá dày) thì slide đó tự cho **cuộn trong slide**
+thay vì cắt mất nội dung. Thêm/sửa slide không cần chỉnh gì thêm, bộ auto-fit tự
+đo lại khi đổi kích thước cửa sổ, xoay máy, mở accordion hoặc ảnh tải xong.
 
 ## In PDF
 
