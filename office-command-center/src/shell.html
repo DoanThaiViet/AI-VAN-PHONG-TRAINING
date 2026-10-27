@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#006838">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Điều hành VP PVEP">
+<meta name="description" content="Điều hành Văn phòng PVEP: lịch Lãnh đạo, mức độ sẵn sàng đoàn khách và sự kiện, đầu việc cần đôn đốc, cảnh báo sớm. Dữ liệu mô phỏng phục vụ đào tạo. Ứng dụng do Đoàn Thái Việt xây dựng.">
+<meta name="author" content="Đoàn Thái Việt">
+<title>Trung tâm Điều hành Văn phòng PVEP</title>
+<link rel="icon" href="__LOGO__">
+<style>
+  :root{--rig:url("__RIG__")}
+/*__CSS__*/
+</style>
+</head>
+<body>
+
+<!-- ============================================================== HEADER -->
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo"><img src="__LOGO__" alt="PETROVIETNAM PVEP"></div>
+      <div>
+        <h1>TRUNG TÂM ĐIỀU HÀNH VĂN PHÒNG PVEP</h1>
+        <div class="sub">Điều hành hôm nay · Cảnh báo sớm · Theo dõi mức độ sẵn sàng · Tình huống mô phỏng</div>
+      </div>
+    </div>
+
+    <div class="hdtools">
+      <div class="asof">
+        <span class="dot"></span>
+        <span class="d" id="hdr-date">04/09/2026</span>
+        <span class="l" id="hdr-time">Mốc mô phỏng 08:15</span>
+        <span class="l">· Dữ liệu mô phỏng</span>
+      </div>
+
+      <div class="menu">
+        <button class="btn btn-ghost" id="btn-scenario" aria-haspopup="true" aria-expanded="false">
+          Kịch bản: <b id="scenario-code">A</b>
+        </button>
+        <div class="menu-pop" id="menu-scenario" hidden role="menu">
+          <div class="mh">KỊCH BẢN MÔ PHỎNG</div>
+          <div id="scenario-list"></div>
+        </div>
+      </div>
+
+      <button class="btn btn-ai" id="btn-brief">✦ TÓM TẮT<span class="ai-long"> BUỔI SÁNG</span></button>
+
+      <div class="menu">
+        <button class="btn btn-ghost" id="btn-more" aria-haspopup="true" aria-expanded="false" title="Tuỳ chọn">⋯</button>
+        <div class="menu-pop" id="menu-more" hidden role="menu">
+          <div class="mh">TUỲ CHỌN</div>
+          <button class="menu-item" id="btn-present">
+            <div class="t">Chế độ trình chiếu</div>
+            <div class="s">Ẩn bớt nút điều khiển, chỉ giữ phần cần cho buổi trình chiếu.</div>
+          </button>
+          <button class="menu-item hide-present" id="btn-load">
+            <div class="t">Nạp dữ liệu từ tệp</div>
+            <div class="s">Chọn tệp JSON để thay bộ dữ liệu mẫu. Không gửi gì ra ngoài máy.</div>
+          </button>
+          <button class="menu-item hide-present" id="btn-reset">
+            <div class="t">Đặt lại bản mô phỏng</div>
+            <div class="s">Đưa toàn bộ trạng thái về đúng như lúc mở lần đầu.</div>
+          </button>
+          <div class="menu-cr">Ứng dụng do <b>Đoàn Thái Việt</b> xây dựng.<br>Bản mô phỏng dùng để minh hoạ và đào tạo, không phải hệ thống vận hành.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================================================================= NAV -->
+<nav class="tabs">
+  <div class="wrap" role="tablist" aria-label="Khu vực điều hành">
+    <button class="active" data-tab="today" role="tab" aria-selected="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg>
+      <span class="num">01</span><span class="lbl-full">HÔM NAY</span><span class="lbl-short">Hôm nay</span>
+      <span class="bdg" id="bdg-today" hidden>0</span>
+    </button>
+    <button data-tab="agenda" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+      <span class="num">02</span><span class="lbl-full">LỊCH LÃNH ĐẠO</span><span class="lbl-short">Lịch</span>
+    </button>
+    <button data-tab="events" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="3.5"/><path d="M18 8.5h4M20 6.5v4"/></svg>
+      <span class="num">03</span><span class="lbl-full">ĐOÀN KHÁCH VÀ SỰ KIỆN</span><span class="lbl-short">Sự kiện</span>
+      <span class="bdg" id="bdg-events" hidden>0</span>
+    </button>
+    <button data-tab="actions" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+      <span class="num">04</span><span class="lbl-full">ĐẦU VIỆC CẦN ĐÔN ĐỐC</span><span class="lbl-short">Đầu việc</span>
+      <span class="bdg" id="bdg-actions" hidden>0</span>
+    </button>
+    <button data-tab="comms" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-9A8.4 8.4 0 0 1 21 11.5Z"/></svg>
+      <span class="num">05</span><span class="lbl-full">TRUYỀN THÔNG</span><span class="lbl-short">Truyền thông</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ================================================================ MAIN -->
+<main>
+
+  <!-- ------------------------------------------------------- 01 HÔM NAY -->
+  <section class="view active" id="view-today" role="tabpanel">
+    <div class="view-scroll wrap">
+
+      <div class="kpis" id="kpi-row"></div>
+
+      <div class="today-grid">
+
+        <div class="card">
+          <div class="card-h">
+            <h2>Lịch Lãnh đạo hôm nay</h2>
+            <span class="tag" id="ag-count"></span>
+          </div>
+          <div class="card-b" id="today-agenda"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <h2>Cần chú ý</h2>
+            <span class="tag">Ngoại lệ · đỏ trước, vàng sau</span>
+          </div>
+          <div class="card-b" id="today-alerts"></div>
+        </div>
+
+        <div class="col-right">
+          <div class="card">
+            <div class="card-h">
+              <h2>Mức độ sẵn sàng</h2>
+              <span class="tag">Điểm mô phỏng</span>
+            </div>
+            <div class="card-b" id="today-readiness"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-h"><h2>Đầu việc</h2></div>
+            <div class="card-b" id="today-radar"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- --------------------------------------------- 02 LỊCH LÃNH ĐẠO -->
+  <section class="view" id="view-agenda" role="tabpanel">
+    <div class="view-scroll wrap" id="agenda-body"></div>
+  </section>
+
+  <!-- ------------------------------------------------ 03 ĐOÀN KHÁCH VÀ SỰ KIỆN -->
+  <section class="view" id="view-events" role="tabpanel">
+    <div class="view-scroll wrap" id="events-body"></div>
+  </section>
+
+  <!-- --------------------------------------------------- 04 ĐẦU VIỆC CẦN ĐÔN ĐỐC -->
+  <section class="view" id="view-actions" role="tabpanel">
+    <div class="view-scroll wrap">
+      <div id="actions-viz"></div>
+      <div class="toolbar">
+        <span class="lbl">Lọc</span>
+        <div class="seg" id="act-filter"></div>
+        <span class="lbl">Sắp xếp</span>
+        <select class="sel" id="act-sort">
+          <option value="deadline">Theo hạn</option>
+          <option value="priority">Theo mức ưu tiên</option>
+          <option value="owner">Theo đầu mối</option>
+        </select>
+      </div>
+      <div id="actions-body"></div>
+    </div>
+  </section>
+
+  <!-- -------------------------------------------------- 05 TRUYỀN THÔNG -->
+  <section class="view" id="view-comms" role="tabpanel">
+    <div class="view-scroll wrap" id="comms-body"></div>
+  </section>
+
+</main>
+
+<!-- ================================================== DRAWER / LOP PHU -->
+<div class="scrim" id="scrim" hidden></div>
+
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <div class="dr-h">
+    <div>
+      <div class="kicker" id="drawer-kicker"></div>
+      <h2 id="drawer-title"></h2>
+      <div class="sub" id="drawer-sub"></div>
+    </div>
+    <button class="x-btn" data-close aria-label="Đóng">✕</button>
+  </div>
+  <div class="dr-b" id="drawer-body"></div>
+  <div class="dr-f" id="drawer-foot"></div>
+</aside>
+
+<button class="fab" id="btn-ask">✦ Hỏi nhanh</button>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<input type="file" id="file-input" accept=".json,.xlsx,.xls" hidden>
+
+<script>
+/*__DATA__*/
+</script>
+<script>
+/*__ENGINE__*/
+</script>
+<script>
+/*__APP__*/
+</script>
+</body>
+</html>
